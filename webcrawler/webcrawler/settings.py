@@ -9,14 +9,15 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'webcrawler'
+BOT_NAME = 'PUBG'
 
 SPIDER_MODULES = ['webcrawler.spiders']
 NEWSPIDER_MODULE = 'webcrawler.spiders'
 
-
+LOG_LEVEL = 'INFO'
+LOG_FILE = 'log.txt'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'webcrawler (+http://www.yourdomain.com)'
+# USER_AGENT = '"Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_8; en-US) AppleWebKit/532.8 (KHTML, like Gecko) Chrome/4.0.302.2 Safari/532.8'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -27,7 +28,7 @@ ROBOTSTXT_OBEY = True
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 5
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -55,6 +56,10 @@ ROBOTSTXT_OBEY = True
 #DOWNLOADER_MIDDLEWARES = {
 #    'webcrawler.middlewares.WebcrawlerDownloaderMiddleware': 543,
 #}
+DOWNLOADER_MIDDLEWARES = {
+        'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware' : None,
+        'webcrawler.comm.rotate_useragent.RotateUserAgentMiddleware' :400
+    }
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
