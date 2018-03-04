@@ -1,4 +1,16 @@
 import scrapy
+# from functools import wraps
+#
+#
+# def validate_response(func):
+#     @wraps(func)
+#     def wrapper(*args, **kwargs):
+#         response = args[1]
+#         if response.xpath("//a[@href='/join']"):
+#             return func(*args, **kwargs)
+#         else:
+#             return scrapy.Request(url=response.url, callback=func, dont_filter=True)
+#     return wrapper
 
 
 class JobSpider(scrapy.Spider):
@@ -15,6 +27,8 @@ class JobSpider(scrapy.Spider):
     def parse_more_roles(self, response):
         # page = response.url.split("/")[-1]
         self.logger.debug(response.url)
+        self.logger.debug(response.request.meta['proxy'])
+        self.logger.debug(response.request.headers.get('User-Agent'))
         more_roles = response.xpath("(//div/div/ul/li)[last()]/a")
         follow_links = []
         for role in more_roles:
@@ -29,6 +43,8 @@ class JobSpider(scrapy.Spider):
     def parse_roles(self, response):
         # page = response.url.split("/")[-1]
         self.logger.debug(response.url)
+        self.logger.debug(response.request.meta['proxy'])
+        self.logger.debug(response.request.headers.get('User-Agent'))
         roles = response.xpath('//div/ul/li/a')
         follow_links = []
         for role in roles:
@@ -42,6 +58,8 @@ class JobSpider(scrapy.Spider):
 
     def parse_company(self, response):
         self.logger.debug(response.url)
+        self.logger.debug(response.request.meta['proxy'])
+        self.logger.debug(response.request.headers.get('User-Agent'))
         companies = response.xpath('//h5/a')
         follow_links = []
         for com in companies:
@@ -56,8 +74,11 @@ class JobSpider(scrapy.Spider):
 
     def parse_job(self, response):
         self.logger.debug(response.url)
+        self.logger.debug(response.request.meta['proxy'])
+        self.logger.debug(response.request.headers.get('User-Agent'))
         job_groups = response.xpath('//li[div]')
         follow_link = []
+        job_category = "None"
         for jg in job_groups:
             job_category = jg.xpath('div/text()').extract_first()
             jobs = jg.xpath('(div[node()])[last()]/div')
@@ -72,10 +93,13 @@ class JobSpider(scrapy.Spider):
             yield response.follow(link, callback=self.parse_job_page,
                                   meta={'job title': name, 'job link': link, 'job category': job_category,
                                         'company name': response.meta['company name'],
-                                        'company link': response.meta['company link']})
+                                        'company link': response.meta['company link'],
+                                        'dont_redirect' : True})
 
     def parse_job_page(self, response):
         self.logger.debug(response.url)
+        self.logger.debug(response.request.meta['proxy'])
+        self.logger.debug(response.request.headers.get('User-Agent'))
         ''' job info contains location and contract type
             e.g. Delhi · Full Time
         '''
